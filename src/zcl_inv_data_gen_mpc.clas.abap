@@ -117,7 +117,7 @@ CLASS zcl_inv_data_gen_mpc IMPLEMENTATION.
         comp       = '1020'
         customer   = 'Milka'
         status     = c_cancelled
-        created_by = 'CB999999994' )
+        created_by = 'CB9999999973' )
 
     ) ).
 

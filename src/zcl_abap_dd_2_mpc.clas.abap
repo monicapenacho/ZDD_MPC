@@ -162,29 +162,105 @@ CLASS zcl_abap_dd_2_mpc IMPLEMENTATION.
 
 " 2.6. Clases de entrega y Mantenimiento de datos
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" 2 configuraciones que se pueden aplicar a las tablas de persistencia
+" en el entorno abap en el mismo paquete de desarrollo
+
+*@EndUserText.label : 'Invoices Tabla base de datos'
+*@AbapCatalog.enhancement.category : #NOT_EXTENSIBLE
+*@AbapCatalog.tableCategory : #TRANSPARENT
+
+*@AbapCatalog.deliveryClass : #A
+
+    "CLASES DE ENTREGA
+    "acceso con ctrl espacio
+
+*    Clase   Tipo de datos   Transporte
+*    A   datos de aplicación normalmente no
+"        FIN tabla que almacena datos maestros (cliente, materiales ...) y datos transaccionales
+"        DEPENDEN del mANDANTE
+*    C   configuración por cliente   sí
+"        FIN Tablas de parámetrización o customizing table
+"        Configuraciones que el cliente va a necesitar por ej clases por el tipo de iva
+"        url para llamar al web service. No queremos incluir en el código fuente datos de configuración
+"        se pueden transportar en diferentes ambientes (orden de transporte de tipo customizing)
+*    L   datos temporales    no
+"        fin tablas para tener datos temporales (ej copias de clientes instalaciones etc
+*    G   configuración global    sí
+"        fin tabla de personalización, protegida contra actualización de sap
+"        Los datos de estas tablas no se pueden modificar ni eliminar por sap
+"
+*    E   tablas del sistema  gestionadas por SAP
+"         fin tablas de control
+"    S      tabla estándar SAP con datos        SAP
+"           Tabla del sistema, mantenimiento solo por sap , cambio = modificación
+"    W     tabla SAP ampliable     SI
+"          Tablas con contenido transportable en los diferentes entornos por los administradores de sist
 
 
 
 
+*@AbapCatalog.dataMaintenance : #RESTRICTED
+
+" CATALOGO DATA MANTENIMIENTO
+
+*Opción  Qué permite
+*#ALLOWED    insertar / modificar / borrar
+*#RESTRICTED mantenimiento limitado (con restricciones) y visualización
+*#NOT_ALLOWED    no se puede mantener. Los datos no se pueden visualizar ni modificar
+*#DISPLAY    solo visualizar
+
+" word click derecho generate abap repository objects
+
+"Cambiamos a C @AbapCatalog.deliveryClass : #C
+
+" generate abap repository object - managed object - next
+" otro error - no tiene sentido tener una tabla de parametrizaciones
+"si no permitimos modificaciones
+
+
+" cambiamos a Allowed
+
+
+
+*@AbapCatalog.dataMaintenance : #ALLOWED
 
 
 
 
+" 2.7. Incluir estructuras en Tablas
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" En la def de las tablas en abap
+" Es posible hacer referencia a los componentes de una estructura
+" como columnas de la tabla de persistencia
+" utilizando un INCLUDE
+" EJ AGREgar más columnas en la tabla zinvoice_mpc
 
+*Opción 1
+*Copiar y pegar todos los componentes de la estructura ZST_EMPL_ADDRESS_MPC en la tabla zinvoice_mpc
+*
+*Como columnas dentro de la tabla de persistencia
+*Si tenemos que usar la misma estructura en múltiples tablas tenemos que realizar la copia de la misma manera sin ninguna referencia a la estructura.
+*Son dos objetos que no dependen de ninguna manera uno de otro
+*No tienen dependencia
+*Y además si más adelante se solicita la ampliación de un nuevo componente o campo para los datos de dirección tenemos que ir tabla por tabla haciendo el mismo cambio
+*En cambio si referenciamos con un include en todas las tablas a la misma estructura en el momento que se solicita una ampliación es suficiente ampliar la estructura con un nuevo componente
+*Que se va a reflejar en la definición de todas las tablas donde se utiliza la estructura
+*
+*Opción 2 include para referencia a la estructura
+*Deshacemos opción 1 que es una mala praxis
+*1º indicar por un grupo  ej add de address : include y después el nombre de la estructura zst
 
+"incluir en la tabla zinvoice_mpc un campo
+"add : include zst_empl_address_mpc;
 
+"Se puede poner nombre address la recomendación es asignar 3 caracteres en el grupo add
 
+" activar y ver la bbdd
 
-
-
-
-
-
-
-
-
-
-
+" with suffix (max 3 caracteres)
+" ad1 ad2 porque queremos almacenar la información con la dirección del cliente y con la dirección de entrega
+" para no duplicar campos agregamos un sufijo en el include
+" f8
 
 
   ENDMETHOD.
