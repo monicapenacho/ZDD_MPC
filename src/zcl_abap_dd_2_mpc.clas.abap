@@ -263,5 +263,88 @@ CLASS zcl_abap_dd_2_mpc IMPLEMENTATION.
 " f8
 
 
+" 2.8. Campos, Importe y Cantidad
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"zinvoice_mpc
+
+" importe - moneda que le corresponde
+" cantidad - unidad de medida que le corresponde
+" hay que conocer como referenciarlos a las monedas y u.m. respectivamente en las tablas de persistencia
+*Incluir en zinvoice_mpc los nuevos campos (lo ideal con un dominio)
+*Amount - Curr = currency (longitud, decimales) es un tipo predefinido. Sale un mensaje de error porque se desconoce cuál es la clave de la moneda . Tenemos que referenciar e incluir en cada columna de amount la anotación de cuál es la clave de la moneda
+*Currency_key = clave de la moneda  cuky = tipo predefinido
+*Es posible tener múltiples monedas
+*Seguimos con el error  porque falta referenciar amount con currency_key
+*Incluimos delante de amount @semantics – ‘tabla de referencia.columna de moeda.’
+*El mismo proceso para cantidad y unidad de medida
+
+*@EndUserText.label : 'Invoices Tabla base de datos'
+*@AbapCatalog.enhancement.category : #NOT_EXTENSIBLE
+*@AbapCatalog.tableCategory : #TRANSPARENT
+*@AbapCatalog.deliveryClass : #A
+*@AbapCatalog.dataMaintenance : #RESTRICTED
+*define table zinvoice_mpc {
+*
+*  key client     : abap.clnt not null;
+*  key invoice_id : abap.char(10) not null;
+*  key comp       : abap.char(4) not null;
+*  customer       : abap.char(30);
+*  status         : abap.char(1);
+*  @Semantics.amount.currencyCode : 'zinvoice_mpc.currency_key'
+*  amount         : abap.curr(16,2);
+*  currency_key   : abap.cuky;
+*  @Semantics.quantity.unitOfMeasure : 'zinvoice_mpc.unit'
+*  quantity       : abap.quan(10,2);
+*  unit           : abap.unit(3);
+*  created_by     : abap.char(12);
+*  add            : include zst_empl_address_mpc;
+*  ad2            : include zst_empl_address_mpc with suffix ad;
+*  ad3            : include zst_empl_address_mpc with suffix ad3;
+*
+*}
+
+"quitar cantidad
+
+
+" 2.9. Indice
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"zinvoice_mpc
+
+" Table Index: ZINVOICE_MPC~CUS
+
+" ver word
+
+*Un índice de tabla sirve para acelerar búsquedas en la base de datos.
+*Propiedad   Qué hace
+*Unique Index    no permite duplicados - mejora tiempos de respuestas
+*Index on Table Buffer only  índice solo en memoria. sólo aplica a las tablas que tienen el buffer activo
+*Fuzzy Search Index  búsqueda borrosa o aproximada - habilita la capacidad de la base de datos para búsquedas avanzadas
+*Index Fields    campos que forman el índice. Agregar los nombres de las columnas a indexar
+
+"2.10. Tabla Global Temporal
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" ver word
+" DICCIONAR NUEVA TABLA BASE DE DATOS
+" ZEMPL_MPC      - GLOBAL TEMPORARY TABLE - VER WORD
+" ZCL_GTT_MPC    - VER ZCL
+
+*
+*@EndUserText.label : 'Employees - Global Temporal Table'
+*@AbapCatalog.enhancement.category : #NOT_EXTENSIBLE
+*@AbapCatalog.tableCategory : #GLOBAL_TEMPORARY
+*@AbapCatalog.deliveryClass : #A
+*@AbapCatalog.dataMaintenance : #RESTRICTED
+*
+*define table zempl_lgl {
+*
+*  key client     : abap.clnt not null;
+*  key emp_id     : abap.numc(5) not null;
+*
+*  first_name     : zde_first_name_lgl;
+*  last_name      : zde_last_name_lgl;
+*
+*}
+
+
   ENDMETHOD.
 ENDCLASS.
